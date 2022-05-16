@@ -1,0 +1,11 @@
+:root {
+  --turquoise: #2de1c2ff;
+  --medium-turquoise: #6ad5cbff;
+  --green-sheen: #7fbeabff;
+  --morning-blue: #7e998aff;
+  --battleship-grey: #85877cff;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}
