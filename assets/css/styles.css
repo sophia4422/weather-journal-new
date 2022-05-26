@@ -9,3 +9,7 @@
 body {
   font-family: "Roboto", sans-serif;
 }
+
+.nav-styles {
+  background-color: var(--morning-blue);
+}
