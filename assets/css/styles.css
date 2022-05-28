@@ -15,3 +15,7 @@ body {
   margin-bottom: 2rem;
   background-color: #e9ecef;
 }
+
+.current-weather-card {
+  background-color: #242526;
+}
