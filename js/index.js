@@ -45,14 +45,8 @@ const fetchData = async (url, options = {}) => {
   }
 };
 
-const url = constructUrl("", {
-  q: "",
-  type: "",
-});
-
-const renderCurrentData = () => {
+const renderCurrentData = (data) => {
   const currentWeatherCard = `<div class="col-sm-12 col-md-9" id="weather-info-container">
-  <!-- current data -->
   <div class="text-center">
     <div class="current-weather-card text-white p-3">
     <h2>Orlando</h2>
@@ -258,8 +252,6 @@ const renderRecentSearches = () => {
 
     const recentCities = recentSearches.map(createRecentCity).join("");
 
-    console.log(recentCities);
-
     //if render recent searches list
     const ul = `<ul class="list-group rounded-0">
         ${recentCities}
@@ -288,7 +280,7 @@ const handleRecentSearchClick = (event) => {
   }
 };
 
-const handleFormSubmit = (event) => {
+const handleFormSubmit = async (event) => {
   event.preventDefault();
 
   //get form input value
@@ -296,6 +288,36 @@ const handleFormSubmit = (event) => {
 
   if (cityName) {
     //fetch data from API
+    //current data url
+
+    const currentDataUrl = constructUrl(
+      "https://api.openweathermap.org/data/2.5/weather",
+      {
+        q: cityName,
+        appid: "8109f605d79877f7488a194794a29013",
+      }
+    );
+
+    const currentData = await fetchData(currentDataUrl);
+
+    //get lat long and city name
+    const lat = currentData?.coord?.lat;
+    const lon = currentData?.coord?.lon;
+    const displayCityName = currentData?.name;
+
+    console.log(lat, lon, displayCityName);
+
+    // forecast url
+    const forecastDataUrl = constructUrl(
+      "https://api.openweathermap.org/data/2.5/onecall",
+      {
+        lat: lat,
+        lon: lon,
+        exclude: "minutely,hourly",
+        units: "metric",
+        appid: "8109f605d79877f7488a194794a29013",
+      }
+    );
 
     // render current data
     renderCurrentData();
