@@ -45,6 +45,19 @@ const fetchData = async (url, options = {}) => {
   }
 };
 
+const getUviClassName = (uvi) => {
+  if (uvi >= 0 && uvi <= 2) {
+    return "bg-success";
+  }
+
+  if (uvi > 2 && uvi <= 8) {
+    return "bg-warning";
+  }
+  if (uvi > 8) {
+    return "bg-danger";
+  }
+};
+
 const renderCurrentData = (data) => {
   console.log(data);
   const currentWeatherCard = `<div class="col-sm-12 col-md-9" id="weather-info-container">
