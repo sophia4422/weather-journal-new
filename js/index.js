@@ -68,7 +68,6 @@ const renderCurrentData = (data) => {
     <div><img src="http://openweathermap.org/img/w/${data.weatherData.current.weather[0].icon}.png" alt="icon of clouds"/></div>
   </div>
 
-    <!-- weather metrics div -->
     <div>
       <div class="row g-0">
         <div class="col-sm-12 col-md-4 p-2 border fw-bold">Temperature</div>
@@ -95,7 +94,7 @@ const renderCurrentData = (data) => {
   weatherInfoContainer.append(currentWeatherCard);
 };
 
-const renderForecastData = () => {
+const renderForecastData = (data) => {
   const forecastWeatherCards = `<div>
         <h2 class="mt-3 text-center">5 day Forecast</h2>
         <div class="d-flex flex-row justify-content-center flex-wrap">
@@ -108,21 +107,21 @@ const renderForecastData = () => {
             <div class="mt-4 text-center">
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">Temperature</div>
-                <div class="col-12 border">${data.weatherData.current.temp}deg;C</div>
+                <div class="col-12 border">deg;C</div>
             </div>
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">Humidity</div>
-                <div class="col-12 border">${data.weatherData.current.humidity}&percnt;</div>
+                <div class="col-12 border">&percnt;</div>
             </div>
 
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">Wind speed</div>
-                <div class="col-12 border">${data.weatherData.current.wind_speed}mpH</div>
+                <div class="col-12 border">mpH</div>
             </div>
 
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">UV Index</div>
-                <div class="col-12 border"><span class="bg-success text-white px-3 rounded-2">${data.weatherData.current.uvi}</span></div>
+                <div class="col-12 border"><span class="bg-success text-white px-3 rounded-2"></span></div>
             </div>
             </div>
         </div>
@@ -250,7 +249,7 @@ const renderForecastData = () => {
   weatherInfoContainer.append(forecastWeatherCards);
 };
 
-const renderRecentSearches = (cityName) => {
+const renderRecentSearches = () => {
   // get recent searches from LS
   const recentSearches = readFromLocalStorage("recentSearches", []);
 
@@ -292,12 +291,42 @@ const fetchWeatherData = async (cityName) => {
   );
 };
 
-const handleRecentSearchClick = (event) => {
+const currentData = await fetchData(currentDataUrl);
+
+//get la lon and city name
+const lat = currentData?.coord?.lat;
+const lon = currentData?.coord?.lon;
+const displayCityName = currentData?.name;
+
+// forecast url
+const forecastDataUrl = constructUrl(
+  "https://api.openweathermap.org/data/2.5/onecall",
+  {
+    lat: lat,
+    lon: lon,
+    exclude: "minutely,hourly",
+    units: "metric",
+    appid: "8109f605d79877f7488a194794a29013",
+  }
+);
+
+const forecastData = await fetchData(forecastDataUrl);
+
+return {
+  cityName: displayCityName,
+  weatherData: forecastData,
+};
+
+//
+
+const handleRecentSearchClick = async (event) => {
   const target = $(event.target);
   //restrict clicks only from list items
   if (target.is("li")) {
     //get data city attribute
     const cityName = target.attr("data-city");
+
+    await renderWeatherInfo(cityName);
   }
 };
 
@@ -311,13 +340,6 @@ const handleFormSubmit = async (event) => {
     //fetch data from API
     const renderStatus = await fetchWeatherData(cityName);
     //current data url
-
-    const forecastData = await fetchData(forecastDataUrl);
-
-    return {
-      cityName: displayCityName,
-      weatherData: forecastData,
-    };
 
     // render current data
     renderCurrentData(weatherData);
@@ -348,3 +370,5 @@ const onReady = () => {
 recentSearchesContainer.click(handleRecentSearchClick);
 searchForm.submit(handleFormSubmit);
 $(document).ready(onReady);
+
+//3:26
