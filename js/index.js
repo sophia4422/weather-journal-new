@@ -50,31 +50,31 @@ const renderCurrentData = (data) => {
   const currentWeatherCard = `<div class="col-sm-12 col-md-9" id="weather-info-container">
   <div class="text-center">
     <div class="current-weather-card text-white p-3">
-    <h2>Orlando</h2>
+    <h2>${data.cityName}</h2>
     <h3>Sat 28th May 2022</h3>
-    <div><img src="http://openweathermap.org/img/w/04d.png" alt="icon of clouds"/></div>
+    <div><img src="http://openweathermap.org/img/w/${data.weatherData.current.weather[0].icon}.png" alt="icon of clouds"/></div>
   </div>
 
     <!-- weather metrics div -->
     <div>
       <div class="row g-0">
         <div class="col-sm-12 col-md-4 p-2 border fw-bold">Temperature</div>
-        <div class="col-sm-12 col-md-8 p-2 border">20&deg;C</div>
+        <div class="col-sm-12 col-md-8 p-2 border">${data.weatherData.current.temp}&deg;C</div>
       </div>
 
       <div class="row g-0">
         <div class="col-sm-12 col-md-4 p-2 border fw-bold">Humidity</div>
-        <div class="col-sm-12 col-md-8 p-2 border">20&percnt;</div>
+        <div class="col-sm-12 col-md-8 p-2 border">${data.weatherData.current.humidity}&percnt;</div>
       </div>
 
       <div class="row g-0">
         <div class="col-sm-12 col-md-4 p-2 border fw-bold">Windspeed</div>
-        <div class="col-sm-12 col-md-8 p-2 border">10 mpH</div>
+        <div class="col-sm-12 col-md-8 p-2 border">${data.weatherData.current.wind_speed}mpH</div>
       </div>
 
       <div class="row g-0">
         <div class="col-sm-12 col-md-4 p-2 border fw-bold">UV Index</div>
-        <div class="col-sm-12 col-md-8 p-2 border"><span class="bg-success text-white px-3 rounded-2">1.5</span></div>
+        <div class="col-sm-12 col-md-8 p-2 border"><span class="bg-success text-white px-3 rounded-2">${data.weatherData.current.uvi}</span></div>
       </div>
   </div>
 </div>`;
@@ -95,21 +95,21 @@ const renderForecastData = () => {
             <div class="mt-4 text-center">
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">Temperature</div>
-                <div class="col-12 border">20&deg;C</div>
+                <div class="col-12 border">${data.weatherData.current.temp}deg;C</div>
             </div>
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">Humidity</div>
-                <div class="col-12 border">20&percnt;</div>
+                <div class="col-12 border">${data.weatherData.current.humidity}&percnt;</div>
             </div>
 
             <div class="row g-0">
-                <div class="col-12 border bg-light fw-bold">Windspeed</div>
-                <div class="col-12 border">10 mpH</div>
+                <div class="col-12 border bg-light fw-bold">Wind speed</div>
+                <div class="col-12 border">${data.weatherData.current.wind_speed}mpH</div>
             </div>
 
             <div class="row g-0">
                 <div class="col-12 border bg-light fw-bold">UV Index</div>
-                <div class="col-12 border"><span class="bg-success text-white px-3 rounded-2">1.5</span></div>
+                <div class="col-12 border"><span class="bg-success text-white px-3 rounded-2">${data.weatherData.current.uvi}</span></div>
             </div>
             </div>
         </div>
@@ -296,37 +296,15 @@ const handleFormSubmit = async (event) => {
 
   if (cityName) {
     //fetch data from API
-    const weatherData = await fetchWeatherData(cityName);
+    const renderStatus = await fetchWeatherData(cityName);
     //current data url
 
-    const currentDataUrl = constructUrl(
-      "https://api.openweathermap.org/data/2.5/weather",
-      {
-        q: cityName,
-        appid: "8109f605d79877f7488a194794a29013",
-      }
-    );
-
-    const currentData = await fetchData(currentDataUrl);
-
-    //get lat long and city name
-    const lat = currentData?.coord?.lat;
-    const lon = currentData?.coord?.lon;
-    const displayCityName = currentData?.name;
-
-    // forecast url
-    const forecastDataUrl = constructUrl(
-      "https://api.openweathermap.org/data/2.5/onecall",
-      {
-        lat: lat,
-        lon: lon,
-        exclude: "minutely,hourly",
-        units: "metric",
-        appid: "8109f605d79877f7488a194794a29013",
-      }
-    );
-
     const forecastData = await fetchData(forecastDataUrl);
+
+    return {
+      cityName: displayCityName,
+      weatherData: forecastData,
+    };
 
     // render current data
     renderCurrentData(weatherData);
@@ -347,11 +325,6 @@ const handleFormSubmit = async (event) => {
 
     //re-render recent cities
     renderRecentSearches();
-
-    return {
-      cityName: displayCityName,
-      weatherData: forecastData,
-    };
   }
 };
 
