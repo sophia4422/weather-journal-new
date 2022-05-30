@@ -24,6 +24,32 @@ const writeToLocalStorage = (key, value) => {
   localStorage.setItem(key, stringifiedValue);
 };
 
+const constructUrl = (baseUrl, params) => {
+  const queryParams = new URLSearchParams(params).toString();
+
+  return queryParams ? `${baseUrl}?${queryParams}` : baseUrl;
+};
+
+const fetchData = async (url, options = {}) => {
+  try {
+    const response = await fetch(url, options);
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error("Failed to fetch data");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const url = constructUrl("", {
+  q: "",
+  type: "",
+});
+
 const renderCurrentData = () => {
   const currentWeatherCard = `<div class="col-sm-12 col-md-9" id="weather-info-container">
   <!-- current data -->
