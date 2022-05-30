@@ -46,6 +46,7 @@ const fetchData = async (url, options = {}) => {
 };
 
 const renderCurrentData = (data) => {
+  console.log(data);
   const currentWeatherCard = `<div class="col-sm-12 col-md-9" id="weather-info-container">
   <div class="text-center">
     <div class="current-weather-card text-white p-3">
@@ -282,11 +283,8 @@ const handleRecentSearchClick = (event) => {
   const target = $(event.target);
   //restrict clicks only from list items
   if (target.is("li")) {
-    console.log("search");
-
     //get data city attribute
     const cityName = target.attr("data-city");
-    console.log(cityName);
   }
 };
 
@@ -316,8 +314,6 @@ const handleFormSubmit = async (event) => {
     const lon = currentData?.coord?.lon;
     const displayCityName = currentData?.name;
 
-    console.log(lat, lon, displayCityName);
-
     // forecast url
     const forecastDataUrl = constructUrl(
       "https://api.openweathermap.org/data/2.5/onecall",
@@ -333,9 +329,9 @@ const handleFormSubmit = async (event) => {
     const forecastData = await fetchData(forecastDataUrl);
 
     // render current data
-    renderCurrentData(weatherData.current);
+    renderCurrentData(weatherData);
     //render forecast data
-    renderForecastData(weatherData.daily);
+    renderForecastData(weatherData);
 
     //get recent searches from LS
     const recentSearches = readFromLocalStorage("recentSearches", []);
@@ -352,7 +348,10 @@ const handleFormSubmit = async (event) => {
     //re-render recent cities
     renderRecentSearches();
 
-    return forecastData;
+    return {
+      cityName: displayCityName,
+      weatherData: forecastData,
+    };
   }
 };
 
