@@ -236,7 +236,7 @@ const renderForecastData = () => {
   weatherInfoContainer.append(forecastWeatherCards);
 };
 
-const renderRecentSearches = () => {
+const renderRecentSearches = (cityName) => {
   // get recent searches from LS
   const recentSearches = readFromLocalStorage("recentSearches", []);
 
@@ -268,6 +268,16 @@ const renderRecentSearches = () => {
   }
 };
 
+const fetchWeatherData = async () => {
+  const currentDataUrl = constructUrl(
+    "https://api.openweathermap.org/data/2.5/weather",
+    {
+      q: cityName,
+      appid: "8109f605d79877f7488a194794a29013",
+    }
+  );
+};
+
 const handleRecentSearchClick = (event) => {
   const target = $(event.target);
   //restrict clicks only from list items
@@ -288,6 +298,7 @@ const handleFormSubmit = async (event) => {
 
   if (cityName) {
     //fetch data from API
+    const weatherData = await fetchWeatherData(cityName);
     //current data url
 
     const currentDataUrl = constructUrl(
@@ -319,10 +330,12 @@ const handleFormSubmit = async (event) => {
       }
     );
 
+    const forecastData = await fetchData(forecastDataUrl);
+
     // render current data
-    renderCurrentData();
+    renderCurrentData(weatherData.current);
     //render forecast data
-    renderForecastData();
+    renderForecastData(weatherData.daily);
 
     //get recent searches from LS
     const recentSearches = readFromLocalStorage("recentSearches", []);
@@ -338,6 +351,8 @@ const handleFormSubmit = async (event) => {
 
     //re-render recent cities
     renderRecentSearches();
+
+    return forecastData;
   }
 };
 
