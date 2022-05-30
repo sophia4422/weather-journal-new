@@ -1,3 +1,6 @@
-console.log("hello from index");
+const onReady = () => {
+  //target the parent
+  const recentSearchesContainer = $("#recent-searches-container");
+};
 
-//02:11
+$(document).ready(onReady);
