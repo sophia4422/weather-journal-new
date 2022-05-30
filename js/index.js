@@ -268,7 +268,7 @@ const renderRecentSearches = (cityName) => {
   }
 };
 
-const fetchWeatherData = async () => {
+const fetchWeatherData = async (cityName) => {
   const currentDataUrl = constructUrl(
     "https://api.openweathermap.org/data/2.5/weather",
     {
