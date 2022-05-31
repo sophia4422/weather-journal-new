@@ -59,37 +59,60 @@ const getUviClassName = (uvi) => {
 };
 
 const renderCurrentData = (data) => {
-  console.log(data);
-  const currentWeatherCard = `<div class="col-sm-12 col-md-9" id="weather-info-container">
-  <div class="text-center">
-    <div class="current-weather-card text-white p-3">
-    <h2>${data.cityName}</h2>
-    <h3>Sat 28th May 2022</h3>
-    <div><img src="http://openweathermap.org/img/w/${data.weatherData.current.weather[0].icon}.png" alt="icon of clouds"/></div>
-  </div>
-
-    <div>
-      <div class="row g-0">
-        <div class="col-sm-12 col-md-4 p-2 border fw-bold">Temperature</div>
-        <div class="col-sm-12 col-md-8 p-2 border">${data.weatherData.current.temp}&deg;C</div>
+  const currentWeatherCard = `<div class="p-3">
+    <div class="text-center">
+      <h2 class="my-2">${data.cityName}</h2>
+      <h3 class="my-2">${moment
+        .unix(data.weatherData.current.dt + data.weatherData.timezone_offset)
+        .format("dddd, Do MMM, YYYY HH:mm:ss")}</h3>
+      <div>
+        <img
+          src="http://openweathermap.org/img/w/${
+            data.weatherData.current.weather[0].icon
+          }.png"
+          alt="weather icon"
+          class="shadow-sm p-3 mt-3 bg-body rounded border"
+        />
       </div>
-
+    </div>
+    <!-- weather metric div -->
+    <div class="mt-4">
       <div class="row g-0">
-        <div class="col-sm-12 col-md-4 p-2 border fw-bold">Humidity</div>
-        <div class="col-sm-12 col-md-8 p-2 border">${data.weatherData.current.humidity}&percnt;</div>
+        <div class="col-sm-12 col-md-4 p-2 border bg-light fw-bold">
+          Temperature
+        </div>
+        <div class="col-sm-12 col-md-8 p-2 border">${
+          data.weatherData.current.temp
+        }&deg; C</div>
       </div>
-
       <div class="row g-0">
-        <div class="col-sm-12 col-md-4 p-2 border fw-bold">Windspeed</div>
-        <div class="col-sm-12 col-md-8 p-2 border">${data.weatherData.current.wind_speed}mpH</div>
+        <div class="col-sm-12 col-md-4 p-2 border bg-light fw-bold">
+          Humidity
+        </div>
+        <div class="col-sm-12 col-md-8 p-2 border">${
+          data.weatherData.current.humidity
+        }&percnt;</div>
       </div>
-
       <div class="row g-0">
-        <div class="col-sm-12 col-md-4 p-2 border fw-bold">UV Index</div>
-        <div class="col-sm-12 col-md-8 p-2 border"><span class="bg-success text-white px-3 rounded-2">${data.weatherData.current.uvi}</span></div>
+        <div class="col-sm-12 col-md-4 p-2 border bg-light fw-bold">
+          Wind Speed
+        </div>
+        <div class="col-sm-12 col-md-8 p-2 border">${
+          data.weatherData.current.wind_speed
+        } MPH</div>
       </div>
-  </div>
-</div>`;
+      <div class="row g-0">
+        <div class="col-sm-12 col-md-4 p-2 border bg-light fw-bold">
+          UV Index
+        </div>
+        <div class="col-sm-12 col-md-8 p-2 border">
+          <span class="text-white px-3 rounded-2 ${getUviClassName(
+            data.weatherData.current.uvi
+          )}">${data.weatherData.current.uvi}</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
 
   weatherInfoContainer.append(currentWeatherCard);
 };
