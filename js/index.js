@@ -304,6 +304,17 @@ const renderRecentSearches = () => {
   }
 };
 
+const renderErrorAlert = () => {
+  // empty container
+  weatherInfoContainer.empty();
+
+  const alert = `<div class="alert alert-danger" role="alert">
+    Something went wrong!! Please try again.
+  </div>`;
+
+  weatherInfoContainer.append(alert);
+};
+
 const fetchWeatherData = async (cityName) => {
   // fetch data from API
   // current data url
@@ -354,7 +365,7 @@ const handleRecentSearchClick = async (event) => {
   }
 };
 
-cconst handleFormSubmit = async (event) => {
+const handleFormSubmit = async (event) => {
   event.preventDefault();
 
   // get form input value
