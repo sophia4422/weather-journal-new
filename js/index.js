@@ -315,6 +315,27 @@ const renderErrorAlert = () => {
   weatherInfoContainer.append(alert);
 };
 
+const renderWeatherInfo = async (cityName) => {
+  try {
+    // fetch weather data
+    const weatherData = await fetchWeatherData(cityName);
+
+    // empty container
+    weatherInfoContainer.empty();
+
+    // render current data
+    renderCurrentData(weatherData);
+
+    // render forecast data
+    renderForecastData(weatherData);
+
+    return true;
+  } catch (error) {
+    renderErrorAlert();
+    return false;
+  }
+};
+
 const fetchWeatherData = async (cityName) => {
   // fetch data from API
   // current data url
