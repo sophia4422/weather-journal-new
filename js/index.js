@@ -305,6 +305,8 @@ const renderRecentSearches = () => {
 };
 
 const fetchWeatherData = async (cityName) => {
+  // fetch data from API
+  // current data url
   const currentDataUrl = constructUrl(
     "https://api.openweathermap.org/data/2.5/weather",
     {
@@ -312,77 +314,73 @@ const fetchWeatherData = async (cityName) => {
       appid: "8109f605d79877f7488a194794a29013",
     }
   );
+
+  const currentData = await fetchData(currentDataUrl);
+
+  // get lat, lon and city name
+  const lat = currentData?.coord?.lat;
+  const lon = currentData?.coord?.lon;
+  const displayCityName = currentData?.name;
+
+  // forecast url
+  const forecastDataUrl = constructUrl(
+    "https://api.openweathermap.org/data/2.5/onecall",
+    {
+      lat: lat,
+      lon: lon,
+      exclude: "minutely,hourly",
+      units: "metric",
+      appid: "8109f605d79877f7488a194794a29013",
+    }
+  );
+
+  const forecastData = await fetchData(forecastDataUrl);
+
+  return {
+    cityName: displayCityName,
+    weatherData: forecastData,
+  };
 };
-
-const currentData = await fetchData(currentDataUrl);
-
-//get la lon and city name
-const lat = currentData?.coord?.lat;
-const lon = currentData?.coord?.lon;
-const displayCityName = currentData?.name;
-
-// forecast url
-const forecastDataUrl = constructUrl(
-  "https://api.openweathermap.org/data/2.5/onecall",
-  {
-    lat: lat,
-    lon: lon,
-    exclude: "minutely,hourly",
-    units: "metric",
-    appid: "8109f605d79877f7488a194794a29013",
-  }
-);
-
-const forecastData = await fetchData(forecastDataUrl);
-
-return {
-  cityName: displayCityName,
-  weatherData: forecastData,
-};
-
-//
 
 const handleRecentSearchClick = async (event) => {
   const target = $(event.target);
-  //restrict clicks only from list items
+
+  // restrict clicks only from li
   if (target.is("li")) {
-    //get data city attribute
+    // get data city attribute
     const cityName = target.attr("data-city");
 
     await renderWeatherInfo(cityName);
   }
 };
 
-const handleFormSubmit = async (event) => {
+cconst handleFormSubmit = async (event) => {
   event.preventDefault();
 
-  //get form input value
+  // get form input value
   const cityName = $("#search-input").val();
 
+  // validate
   if (cityName) {
-    //fetch data from API
-    const renderStatus = await fetchWeatherData(cityName);
-    //current data url
+    // render weather cards
+    const renderStatus = await renderWeatherInfo(cityName);
 
-    // render current data
-    renderCurrentData(weatherData);
-    //render forecast data
-    renderForecastData(weatherData);
-
-    //get recent searches from LS
+    // get recentSearches from LS
     const recentSearches = readFromLocalStorage("recentSearches", []);
 
-    //push city name to array
-    recentSearches.push(cityName);
+    if (!recentSearches.includes(cityName) && renderStatus) {
+      // push city name to array
+      recentSearches.push(cityName);
 
-    //write recent searches to LS
-    writeToLocalStorage("recentSearches", recentSearches);
+      // write recent searches to LS
+      writeToLocalStorage("recentSearches", recentSearches);
 
-    //remove previous items
-    recentSearchesContainer.children().last().remove();
+      // remove previous items
+      recentSearchesContainer.children().last().remove();
 
-    //re-render recent cities
-    renderRecentSearches();
+      // re-render recent cities
+      renderRecentSearches();
+    }
   }
 };
 
@@ -393,5 +391,3 @@ const onReady = () => {
 recentSearchesContainer.click(handleRecentSearchClick);
 searchForm.submit(handleFormSubmit);
 $(document).ready(onReady);
-
-//3:26
